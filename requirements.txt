@@ -1,0 +1,7 @@
+requests
+pandas
+python-dotenv
+sentence-transformers
+faiss-cpu
+PyMuPDF
+streamlit
