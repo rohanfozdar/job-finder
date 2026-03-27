@@ -5,12 +5,21 @@ import JobCard from "../components/JobCard";
 
 interface ResultsPageProps {
   jobs: Job[];
+  setJobs: React.Dispatch<React.SetStateAction<Job[]>>;
+  resumeFile: File | null;
   jobTitle: string;
   location: string;
   onBack: () => void;
 }
 
-const ResultsPage: React.FC<ResultsPageProps> = ({ jobs, jobTitle, location, onBack }) => {
+const ResultsPage: React.FC<ResultsPageProps> = ({
+  jobs,
+  setJobs,
+  resumeFile,
+  jobTitle,
+  location,
+  onBack,
+}) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedJobTypes, setSelectedJobTypes] = useState<string[]>([
     "INTERN",
@@ -26,6 +35,8 @@ const ResultsPage: React.FC<ResultsPageProps> = ({ jobs, jobTitle, location, onB
   const [sortBy, setSortBy] = useState<string>("date");
   const [savedOnly, setSavedOnly] = useState<boolean>(false);
   const [showSavedTab, setShowSavedTab] = useState<"all" | "saved">("all");
+  const [scoringLoading, setScoringLoading] = useState(false);
+  const [scoringError, setScoringError] = useState<string | null>(null);
 
   const handleClearFilters = () => {
     setSearchTerm("");
@@ -98,6 +109,41 @@ const ResultsPage: React.FC<ResultsPageProps> = ({ jobs, jobTitle, location, onB
 
   const allAiNull = jobs.every((j) => j.ai_score == null);
 
+  const handleRunAIScoring = async () => {
+    if (!resumeFile) {
+      setScoringError("Upload a resume on the home page before running AI scoring.");
+      return;
+    }
+    setScoringError(null);
+    setScoringLoading(true);
+    try {
+      const baseUrl = import.meta.env.VITE_API_URL || "/api";
+      const formData = new FormData();
+      formData.append("resume", resumeFile);
+      formData.append("jobs", JSON.stringify(jobs));
+
+      const resp = await fetch(`${baseUrl}/score`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await resp.json().catch(() => null);
+      if (!resp.ok || (data && "error" in data && data.error)) {
+        setScoringError("Scoring failed. Please try again.");
+        return;
+      }
+      if (data && Array.isArray(data.jobs)) {
+        setJobs(data.jobs as Job[]);
+      } else {
+        setScoringError("Scoring failed. Please try again.");
+      }
+    } catch {
+      setScoringError("Scoring failed. Please try again.");
+    } finally {
+      setScoringLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background text-text flex flex-col">
       <header className="px-4 py-4 border-b border-slate-800 flex items-center justify-between">
@@ -117,17 +163,19 @@ const ResultsPage: React.FC<ResultsPageProps> = ({ jobs, jobTitle, location, onB
             </div>
           </div>
         </div>
-        <button
-          type="button"
-          onClick={() =>
-            alert(
-              "AI Scoring coming soon! This feature will re-rank results using your resume. Check back later."
-            )
-          }
-          className="px-4 py-2 text-sm rounded-md bg-primary text-white font-semibold hover:bg-primary/80"
-        >
-          Run AI Scoring ✨
-        </button>
+        <div className="flex flex-col items-end gap-1">
+          {scoringError && (
+            <span className="text-xs text-red-400 max-w-xs text-right">{scoringError}</span>
+          )}
+          <button
+            type="button"
+            onClick={handleRunAIScoring}
+            disabled={scoringLoading}
+            className="px-4 py-2 text-sm rounded-md bg-primary text-white font-semibold hover:bg-primary/80 disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {scoringLoading ? "Scoring... ✨" : "Run AI Scoring ✨"}
+          </button>
+        </div>
       </header>
 
       <main className="flex-1 flex flex-col md:flex-row gap-4 px-4 py-4">

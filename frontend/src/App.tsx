@@ -14,10 +14,17 @@ const App: React.FC = () => {
   const [page, setPage] = useState<Page>("home");
   const [jobs, setJobs] = useState<Job[]>([]);
   const [searchContext, setSearchContext] = useState<SearchContext | null>(null);
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
 
-  const handleSearchComplete = (results: Job[], jobTitle: string, location: string) => {
+  const handleSearchComplete = (
+    results: Job[],
+    jobTitle: string,
+    location: string,
+    file: File | null
+  ) => {
     setJobs(results);
     setSearchContext({ jobTitle, location });
+    setResumeFile(file);
     setPage("results");
   };
 
@@ -25,12 +32,15 @@ const App: React.FC = () => {
     setPage("home");
     setJobs([]);
     setSearchContext(null);
+    setResumeFile(null);
   };
 
   if (page === "results" && searchContext) {
     return (
       <ResultsPage
         jobs={jobs}
+        setJobs={setJobs}
+        resumeFile={resumeFile}
         jobTitle={searchContext.jobTitle}
         location={searchContext.location}
         onBack={handleBackToHome}

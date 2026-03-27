@@ -1,8 +1,11 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
 from jooble import search_jobs
 from models import SearchRequest, JobResult, SearchResponse
+
+
+HF_SCORING_URL = "https://rohanfozdar-job-finder-scoring.hf.space/score"
 
 
 app = FastAPI(title="Job Finder API", version="1.0.0")
@@ -36,6 +39,23 @@ async def search(body: SearchRequest) -> SearchResponse:
     )
     job_results = [JobResult(**j) for j in jobs_raw]
     return SearchResponse(total_fetched=len(job_results), jobs=job_results)
+
+
+@app.post("/score")
+async def score(
+    resume: UploadFile = File(...),
+    jobs: str = Form(...),
+):
+    import httpx
+
+    resume_bytes = await resume.read()
+    async with httpx.AsyncClient(timeout=120.0) as client:
+        response = await client.post(
+            HF_SCORING_URL,
+            files={"resume": ("resume.pdf", resume_bytes, "application/pdf")},
+            data={"jobs": jobs},
+        )
+    return response.json()
 
 
 if __name__ == "__main__":

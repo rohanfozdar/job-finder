@@ -3,7 +3,7 @@ import SearchForm from "../components/SearchForm";
 import type { Job } from "../types/job";
 
 interface HomePageProps {
-  onSearchComplete: (jobs: Job[], jobTitle: string, location: string) => void;
+  onSearchComplete: (jobs: Job[], jobTitle: string, location: string, resumeFile: File | null) => void;
 }
 
 const HomePage: React.FC<HomePageProps> = ({ onSearchComplete }) => {

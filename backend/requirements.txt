@@ -4,4 +4,5 @@ python-dotenv
 requests
 pydantic
 python-multipart
+httpx
 

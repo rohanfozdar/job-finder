@@ -87,6 +87,27 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
         <p className="text-sm text-text/80">
           {job.description.length > 200 ? `${job.description.slice(0, 200)}...` : job.description}
         </p>
+
+        {job.ai_score != null && (
+          <div className="mt-3">
+            <div className="flex items-center justify-between text-xs text-text/80 mb-1">
+              <span>AI Match:</span>
+              <span>{job.ai_score.toFixed(2)}</span>
+            </div>
+            <div className="h-2 w-full rounded bg-slate-700 overflow-hidden">
+              <div
+                className="h-full bg-primary rounded transition-all"
+                style={{ width: `${Math.min(100, Math.max(0, job.ai_score * 100))}%` }}
+              />
+            </div>
+            <div className="mt-1 font-mono text-[10px] text-text/50 tracking-tight">
+              [
+              {"█".repeat(Math.round(job.ai_score * 8))}
+              {"░".repeat(8 - Math.round(job.ai_score * 8))}]{" "}
+              {job.ai_score.toFixed(2)}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="mt-4 flex items-center justify-between">

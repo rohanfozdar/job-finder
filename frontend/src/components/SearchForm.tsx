@@ -3,7 +3,7 @@ import LoadingSpinner from "./LoadingSpinner";
 import type { Job, SearchResponse } from "../types/job";
 
 interface SearchFormProps {
-  onResults: (jobs: Job[], jobTitle: string, location: string) => void;
+  onResults: (jobs: Job[], jobTitle: string, location: string, resumeFile: File | null) => void;
 }
 
 const SearchForm: React.FC<SearchFormProps> = ({ onResults }) => {
@@ -58,7 +58,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ onResults }) => {
       }
 
       const data: SearchResponse = await resp.json();
-      onResults(data.jobs, jobTitle.trim(), location.trim());
+      onResults(data.jobs, jobTitle.trim(), location.trim(), resumeFile);
     } catch (err: any) {
       setError(err.message || "Failed to fetch jobs. Please try again.");
     } finally {
