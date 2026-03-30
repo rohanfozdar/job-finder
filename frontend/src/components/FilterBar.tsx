@@ -118,6 +118,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
         >
           <option value="date">Date posted (newest first)</option>
           <option value="alpha">Alphabetical (A-Z)</option>
+          <option value="score">AI Score (highest first)</option>
         </select>
       </div>
 

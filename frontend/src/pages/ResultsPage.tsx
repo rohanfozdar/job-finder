@@ -93,6 +93,9 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
         if (sortBy === "alpha") {
           return a.title.localeCompare(b.title);
         }
+        if (sortBy === "score") {
+          return (b.ai_score ?? 0) - (a.ai_score ?? 0);
+        }
         return (b.posted_at || "").localeCompare(a.posted_at || "");
       });
   }, [
