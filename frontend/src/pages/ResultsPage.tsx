@@ -110,7 +110,6 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
   const allAiNull = jobs.every((j) => j.ai_score == null);
 
   const handleRunAIScoring = async () => {
-    console.log("resumeFile:", resumeFile);
     if (!resumeFile) {
       setScoringError("Upload a resume on the home page before running AI scoring.");
       return;
