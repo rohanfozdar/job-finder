@@ -82,7 +82,7 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
           <span>📍 {job.location}</span>
         </div>
 
-        <div className="text-xs text-text/60 mb-2">🗓 {job.posted_at}</div>
+        <div className="text-xs text-text/60 mb-2">🗓 🗓 {job.posted_at ? new Date(job.posted_at).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) : "Date unknown"}</div>
 
         <p className="text-sm text-text/80">
           {job.description.length > 200 ? `${job.description.slice(0, 200)}...` : job.description}
