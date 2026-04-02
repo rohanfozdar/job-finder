@@ -12,7 +12,7 @@ const HomePage: React.FC<HomePageProps> = ({ onSearchComplete }) => {
       <main className="flex-1 flex flex-col items-center justify-center px-4 py-10">
         <section className="max-w-3xl w-full text-center mb-10">
           <h1 className="text-4xl md:text-5xl font-extrabold mb-4 flex items-center justify-center gap-2">
-            <span>Job Finder</span> <span>🎯</span>
+            <span>AutoSearch</span> <span>🔍</span>
           </h1>
           <p className="text-text/80 text-sm md:text-base">
             Upload your resume, tell us what you're looking for, and we'll find the best matches
